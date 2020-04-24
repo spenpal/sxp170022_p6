@@ -11,3 +11,5 @@ header record that is immediately followed by a set of data records. You are to 
 header record. Using information in the header record, you will read the data records from the file.
 For each data record, you are to display the results in a CDK window. After display, you are to wait
 until the user types a character on the keyboard. When they do, you will exit the program.
+
+*MORE INFORMATION FOUND ON PDF FILE*
