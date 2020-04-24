@@ -12,4 +12,5 @@ header record. Using information in the header record, you will read the data re
 For each data record, you are to display the results in a CDK window. After display, you are to wait
 until the user types a character on the keyboard. When they do, you will exit the program.
 
+
 *MORE INFORMATION FOUND ON PDF FILE*
