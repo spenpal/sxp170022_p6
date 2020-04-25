@@ -18,32 +18,65 @@
  *     
  */
 
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <stdlib.h>
+#include <iostream>	// std::cout, std::cerr
+#include <fstream>	// std::ifstream
+#include <string>	// std::string, std::to_string
+#include <sstream>	// std::stringstream
+#include <algorithm>    // std::transform
+#include <stdio.h>	// sprintf()
+
+#include <stdlib.h>	// exit(), EXIT_FAILURE
 #include "cdk.h"
 
 #define MATRIX_WIDTH 3
 #define MATRIX_HEIGHT 5
-#define BOX_WIDTH 15
+#define BOX_WIDTH 20
 #define MATRIX_NAME_STRING "Binary File Contents"
 
 using namespace std;
 
+typedef unsigned char           uint8_t;
+typedef unsigned int           	uint32_t;
+typedef unsigned long int       uint64_t;
+
+// <---------------------------------------------------------------------------------------->
+/* HEADER RECORD FROM BINARY FILE */
+class BinaryFileHeader
+{
+  public:
+    uint32_t magicNumber;		/* Should be 0xFEEDFACE */
+    uint32_t versionNumber;
+    uint64_t numRecords;
+};
+
+/* DATA RECORD FROM BINARY FILE */
+const int maxRecordStringLength = 25;
+
+class BinaryFileRecord
+{
+  public:
+    uint8_t strLength;
+    char stringBuffer[maxRecordStringLength];
+};
+// <---------------------------------------------------------------------------------------->
+
 int main()
 {
+  string matrix[MATRIX_HEIGHT + 1][MATRIX_WIDTH + 1];	// Stores All Information From Binary File
+
   /* BINARY I/O OPERATIONS */
-  char input[100];
   ifstream file("/scratch/perkins/cs3377.bin", ios::binary);
   
   if(!file.is_open())
   {
     cerr << "Error: File Did Not Open" << endl;
-    exit(1);
+    exit(EXIT_FAILURE);
   }
-
-  if(!file.read(input, 32))
+  
+  // HEADER RECORDS //
+  BinaryFileHeader *header = new BinaryFileHeader();
+  
+  if(!file.read((char *) header, sizeof(BinaryFileHeader)))
   {
     cerr << "Error: Reading Corrupted" << endl;
     cerr << "Debugging..." << endl;
@@ -51,14 +84,30 @@ int main()
     file.clear();	// Reset The Stream To A Usable State
   }
 
-  cout << input << endl;
+  // Place "Magic Number" Into Matrix
+  stringstream ss;
+  ss << hex << header->magicNumber;	// Convert Decimal Number To Hex
+  string magicNum = ss.str();
+  transform(magicNum.begin(), magicNum.end(), magicNum.begin(), ::toupper);	// Converts Hex Number to UPPERCASE
+  matrix[1][1] = "Magic: 0x" + magicNum;
+  ss.str("");	// Clears "stringstream"
 
-  // file.seekg(0);
-  char ch;
-  while(file.good())
-  {
-    file.get(ch);
-  }
+  char str[100];
+  // Place "Version Number" Into Matrix
+  sprintf(str, "%u", header->versionNumber);
+  matrix[1][2] = "Version: " + (string) str;
+
+  // Place "Number of Records" Into Matrix
+  ss << "NumRecords: " << header->numRecords;
+  matrix[1][3] = ss.str();
+  /*
+  sprintf(str, "%u", header->numRecords);
+  matrix[1][3] = "NumRecords: " + (string) str;
+  */
+  // DATA RECORDS // 
+  // BinaryFileRecord *record = new BinaryFileRecord();
+
+  file.close();
 
   // <---------------------------------------------------------------------------------------->
   /* CDK OPERATIONS */
@@ -94,7 +143,14 @@ int main()
   drawCDKMatrix(myMatrix, true);
 
   // Dipslay a message
-  setCDKMatrixCell(myMatrix, 2, 2, "Test Message");
+  for(int r = 1; r < MATRIX_HEIGHT + 1; r++)
+  {
+    for(int c = 1; c < MATRIX_WIDTH + 1; c++)
+    {
+      setCDKMatrixCell(myMatrix, r, c, matrix[r][c].c_str());
+    }
+  }
+
   drawCDKMatrix(myMatrix, true);	// REQUIRED
 
   sleep(10);	// Time Of Output Screen
