@@ -20,9 +20,9 @@
 #include <fstream>      // std::ifstream
 #include <string>       // std::string, std::to_string
 #include <sstream>      // std::stringstream
-#include <algorithm>    // std::transform
-#include <stdio.h>      // sprintf()
+#include <stdio.h>      // getchar()
 #include <stdlib.h>     // exit(), EXIT_FAILURE
+#include <stdint.h>	// uint8_t, uint32_t, uint64_t
 #include "cdk.h"
 
 #define MATRIX_WIDTH 3
@@ -32,17 +32,13 @@
 
 using namespace std;
 
-typedef unsigned char           uint8_t;
-typedef unsigned int            uint32_t;
-typedef unsigned long int       uint64_t;
-
 /* HEADER RECORD FROM BINARY FILE */
 class BinaryFileHeader
 {
- public:
-  uint32_t magicNumber;               /* Should be 0xFEEDFACE */
-  uint32_t versionNumber;
-  uint64_t numRecords;
+  public:
+    uint32_t magicNumber;               /* Should be 0xFEEDFACE */
+    uint32_t versionNumber;
+    uint64_t numRecords;
 };
 
 /* DATA RECORD FROM BINARY FILE */
@@ -50,9 +46,9 @@ const int maxRecordStringLength = 25;
 
 class BinaryFileRecord
 {
- public:
-  uint8_t strLength;
-  char stringBuffer[maxRecordStringLength];
+  public:
+    uint8_t strLength;
+    char stringBuffer[maxRecordStringLength];
 };
 
 /* FUNCTIONS */

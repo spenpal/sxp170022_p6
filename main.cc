@@ -1,6 +1,6 @@
 /*
- * Filename:	program6.cc
- * Date: 	04/24/2020
+ * Filename:	main.cc
+ * Date: 	04/25/2020
  * Author: 	Sanjeev Penupala
  * Email: 	sxp170022@utdallas.edu
  * Course: 	CS 3377.501 Spring 2020
@@ -23,7 +23,7 @@
 int main()
 {
   string matrix[MATRIX_HEIGHT + 1][MATRIX_WIDTH + 1];				// Stores All Information From Binary File
-  ifstream file("/scratch/perkins/cs3377.bin", ios::binary);
+  ifstream file("/scratch/perkins/cs3377.bin", ios::in | ios::binary);
   
   if(!file.is_open())
   {
@@ -39,34 +39,53 @@ int main()
     cerr << "Error: Reading Corrupted" << endl;
     cerr << "Debugging..." << endl;
     cerr << "# of Bytes Read (Before Error): " << file.gcount() << endl;
-    file.clear();								// Reset The Stream To A Usable State
+    exit(EXIT_FAILURE);
   }
 
-  // Place "Magic Number" Into Matrix
-  stringstream ss;
-  ss << hex << header->magicNumber;						// Convert Decimal Number To Hex
-  string magicNum = ss.str();
-  transform(magicNum.begin(), magicNum.end(), magicNum.begin(), ::toupper);	// Converts Hex Number to UPPERCASE
-  matrix[1][1] = "Magic: 0x" + magicNum;
-  ss.str("");									// Clears "stringstream"
-
-  char str[100];
-  // Place "Version Number" Into Matrix
-  sprintf(str, "%u", header->versionNumber);
-  matrix[1][2] = "Version: " + (string) str;
+  stringstream ssh;								// "stringstream" Object For Header Record
 
   // Place "Number of Records" Into Matrix
-  ss << "NumRecords: " << header->numRecords;
-  matrix[1][3] = ss.str();
-  /*
-  sprintf(str, "%u", header->numRecords);
-  matrix[1][3] = "NumRecords: " + (string) str;
-  */
+  ssh << "NumRecords: " << header->numRecords;
+  matrix[1][3] = ssh.str();
+  ssh.str("");									// Clears "stringstream"
+  ssh.clear();
+  
+  // Place "Version Number" Into Matrix
+  ssh << "Version: " << header->versionNumber;
+  matrix[1][2] = ssh.str();
+  ssh.str("");
+  ssh.clear();
+  
+  // Place "Magic Number" Into Matrix
+  ssh << "Magic: 0x" << hex << uppercase <<  header->magicNumber;		// Convert Decimal Number To Hex
+  matrix[1][1] = ssh.str();
+  ssh.str("");
+  ssh.clear();
 
   // DATA RECORDS // 
-  // BinaryFileRecord *record = new BinaryFileRecord();
+  stringstream ssd;								// "stringstream" Object For Data Record
+  BinaryFileRecord *record = new BinaryFileRecord();
+  uint64_t numRecords = header->numRecords < 4 ? header->numRecords : 4;	// Read Max Of 4 Records From Binary File
+
+  for(uint64_t i = 2; i < numRecords + 2; i++)
+  {
+    if(!file.read((char *) record, sizeof(BinaryFileRecord)))
+    {
+      cerr << "Error: Reading Corrupted" << endl;
+      cerr << "Debugging..." << endl;
+      cerr << "# of Bytes Read (Before Error): " << file.gcount() << endl;
+      exit(EXIT_FAILURE);
+    }
+    
+    ssd << "strlen: " << (int) record->strLength;				// Convert "unsigned char" To "int"
+
+    matrix[i][1] = ssd.str();							// Length of Data
+    matrix[i][2] = record->stringBuffer;					// Data
+
+    ssd.str(""); 							    	// Clear stringstream
+    ssd.clear();
+  }
 
   file.close();
-
-  display(matrix);
+  display(matrix);	// Sends Data To CDK Matrix, To Be Displayed
 }

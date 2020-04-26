@@ -58,10 +58,9 @@ void display(string matrix[MATRIX_HEIGHT + 1][MATRIX_WIDTH + 1])
 
   drawCDKMatrix(myMatrix, true);        // REQUIRED
 
-  sleep(10);    // Time Of Output Screen
+  //sleep(10);    // Time Of Output Screen
 
   // TODO: If Key Is Pressed, Exit CDK Matrix
-  
-
-  endCDK();     // Cleanup Screen
+  if(getchar())
+    endCDK();     // Cleanup Screen
 }
