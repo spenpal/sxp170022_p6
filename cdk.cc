@@ -1,6 +1,6 @@
 /*
  * Filename:    cdk.cc
- * Date:        04/25/2020
+ * Date:        04/26/2020
  * Author:      Sanjeev Penupala
  * Email:       sxp170022@utdallas.edu
  * Course:      CS 3377.501 Spring 2020
@@ -19,7 +19,7 @@ void display(string matrix[MATRIX_HEIGHT + 1][MATRIX_WIDTH + 1])
 {
   WINDOW        *window;
   CDKSCREEN     *cdkscreen;
-  CDKMATRIX     *myMatrix;           // CDK Screen Matrix
+  CDKMATRIX     *myMatrix;           	// CDK Screen Matrix
 
   const char    *rowTitles[MATRIX_HEIGHT+1] =   {"x", "a", "b", "c", "d", "e"};
   const char    *columnTitles[MATRIX_WIDTH+1] = {"x", "a", "b", "c"};
@@ -58,9 +58,7 @@ void display(string matrix[MATRIX_HEIGHT + 1][MATRIX_WIDTH + 1])
 
   drawCDKMatrix(myMatrix, true);        // REQUIRED
 
-  //sleep(10);    // Time Of Output Screen
-
-  // TODO: If Key Is Pressed, Exit CDK Matrix
+  // If Key Is Pressed, Exit CDK Matrix
   if(getchar())
-    endCDK();     // Cleanup Screen
+    endCDK();     			// Cleanup Screen
 }

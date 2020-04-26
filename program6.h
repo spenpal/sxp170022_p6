@@ -1,6 +1,6 @@
 /*
  * Filename:    program6.h
- * Date:        04/25/2020
+ * Date:        04/26/2020
  * Author:      Sanjeev Penupala
  * Email:       sxp170022@utdallas.edu
  * Course:      CS 3377.501 Spring 2020
@@ -18,7 +18,7 @@
 
 #include <iostream>     // std::cout, std::cerr
 #include <fstream>      // std::ifstream
-#include <string>       // std::string, std::to_string
+#include <string>       // std::string
 #include <sstream>      // std::stringstream
 #include <stdio.h>      // getchar()
 #include <stdlib.h>     // exit(), EXIT_FAILURE
@@ -52,6 +52,6 @@ class BinaryFileRecord
 };
 
 /* FUNCTIONS */
-void display(string[MATRIX_HEIGHT + 1][MATRIX_WIDTH + 1]);
+void display(string [MATRIX_HEIGHT + 1][MATRIX_WIDTH + 1]);
 
 #endif /* PROGRAM6_H */
